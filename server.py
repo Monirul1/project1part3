@@ -179,10 +179,6 @@ def index():
 #     return render_template("general_search.html", Paitients=results_paitients, office_location=results_office_location, provides_service=results_provides_service)
 
 
-@app.route('/test12', methods=['GET'])
-def home():
-    return "<h1>Distant Reading Archive</h1><p>This site is a prototype API for distant reading of science fiction novels.</p>"
-
 # @app.route('/specialty_search', methods=['GET'])
 # def specialty_search():
 #   query=request.args.get('query')
@@ -206,18 +202,15 @@ def general_search():
     query=request.args.get('query')
     
     print ('searching facility name')
-    print (query)
     
     cursor = g.conn.execute("SELECT distinct facility_name FROM provides_service LIMIT 100", query)
     rows=cursor.fetchall()
-
-    print(rows)
-    print("TESTSSS")
     
     cursor.close()
     
     #updating rows by addingfacility_data=rows
     return render_template("general_search.html", Medicaid_Provider=rows)
+
 
 #search by facility name
 @app.route('/search_facility_name', methods=['GET'])
@@ -226,11 +219,9 @@ def search_facility_name():
     query=request.args.get('query')
     
     print ('searching facility name')
-    print (query)
     
     cursor = g.conn.execute("SELECT distinct * FROM provides_service p JOIN office_location k ON k.provider_id=p.provider_id WHERE facility_name= %s", query)
     rows=cursor.fetchall()
-    print(rows)
 
     cursor.close()
     
@@ -242,9 +233,6 @@ def search_facility_name():
 def search_speciality_name():
 
     query=request.args.get('query')
-    
-    print ('searching speciality name')
-    print (query)
     
     cursor = g.conn.execute("SELECT distinct * FROM provides_service p JOIN office_location k ON k.provider_id=p.provider_id WHERE speciality= %s LIMIT 100", query)
     rows=cursor.fetchall()
@@ -264,13 +252,8 @@ def search_specialty():
 
     query=request.args.get('query')
     
-    print ('searching SPECIALTY name')
-    print (query)
-    
     cursor = g.conn.execute("SELECT distinct speciality from provides_service", query)
     rows=cursor.fetchall()
-    print("sprciality printing")
-    print(rows)
 
     cursor.close()
     
@@ -284,13 +267,8 @@ def custom_search():
 
     query=request.args.get('query')
     
-    print ('searching SPECIALTY name')
-    print (query)
-    
     cursor = g.conn.execute("SELECT distinct speciality from provides_service", query)
     rows=cursor.fetchall()
-    print("sprciality printing")
-    print(rows)
 
     cursor.close()
     
@@ -305,12 +283,6 @@ def custom_search_result():
 
     query=request.args.get('query')
     county=request.args.get('county')
-
-    
-    print ('TESTING QUERY ..')
-    print (query)
-    print ('TESTING COUNTY ..')
-    print (county)
     
     cursor = g.conn.execute("SELECT distinct * FROM office_location NATURAL JOIN provides_service WHERE speciality =%s and county =%s limit 100", query, county)
     rows=cursor.fetchall()
@@ -319,8 +291,7 @@ def custom_search_result():
 
     cursor2 = g.conn.execute("SELECT distinct * FROM office_location NATURAL JOIN provides_service WHERE speciality =%s and county =%s limit 100", query, county)
     rows2=cursor2.fetchall()
-    print("sprciality printing")
-    print(rows2)
+
     cursor2.close()
 
     
@@ -329,50 +300,20 @@ def custom_search_result():
     return render_template("custom_search_results.html", specialty_data=rows, data=rows2)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-#search by provider id name
-@app.route('/search_provider_id', methods=['GET'])
-def search_provider_id():
+#search by the most occuring data
+@app.route('/search_most_ouccurinig', methods=['GET'])
+def search_most_ouccurinig():
 
   query = request.args.get('query')
-  print ('searching provider ID')
-  print (query)
+  print ('most ouccring')
   
-  cursor = g.conn.execute("SELECT * FROM provides_service p WHERE p.provider_id = %s", query)
+  cursor = g.conn.execute("select distinct facility_name, count(facility_name)AS most_occuring from provides_service natural join office_location group by facility_name order by most_occuring desc limit 1", query)
   rows = cursor.fetchall()
 
   cursor.close()
   
-  return render_template("search_results.html", provider_id = rows)
+  return render_template("search_most_ouccurinig.html",  data= rows)
+
 
 
 @app.route('/paitient_registration', methods=['GET', 'POST'])
