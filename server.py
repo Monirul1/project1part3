@@ -237,8 +237,6 @@ def search_speciality_name():
     cursor = g.conn.execute("SELECT distinct * FROM provides_service p JOIN office_location k ON k.provider_id=p.provider_id WHERE speciality= %s LIMIT 100", query)
     rows=cursor.fetchall()
     
-    print(rows)
-
     cursor.close()
     
     #updating rows by addingfacility_data=rows
@@ -293,7 +291,6 @@ def custom_search_result():
     rows2=cursor2.fetchall()
 
     cursor2.close()
-
     
     
     #updating rows by addingfacility_data=rows
