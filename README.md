@@ -1,8 +1,8 @@
 # Find a Doc!
 
-### PostgreSQL Account :im2594
+### PostgreSQL Account: im2594
 
-URL:
+URL: http://35.231.138.166:8111/
 
 ## Description:
 1. Search by facility name
